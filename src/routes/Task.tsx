@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ITask } from "../models/interface";
 import TaskItem from "../components/TaskItem";
 import { getTasks } from "../utils/shared";
@@ -12,9 +12,11 @@ import { sortByDueDate } from "../utils/db";
 
 const Task = () => {
 	const [tasks, setTasks] = useState<ITask[]>([]);
+	const [filteredTasks, setFilteredTasks] = useState<ITask[]>([]); // State for filtered tasks
 	const [tasksError, setTasksError] = useState("");
 	const [isViewTask, setIsViewTask] = useState(false);
 	const [selectedTask, setSelectedTask] = useState<ITask>();
+	const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
 	const navigate = useNavigate();
 
@@ -73,6 +75,18 @@ const Task = () => {
 		setSelectedTask(activeTask);
 	};
 
+	const handleSearch = (query: string) => {
+		setSearchQuery(query);
+		if (!query.trim()) {
+			setFilteredTasks([]);
+			return;
+		}
+		const filtered = tasks.filter((task) =>
+			task.name.toLowerCase().includes(query.toLowerCase())
+		);
+		setFilteredTasks(filtered);
+	};
+
 	useEffect(() => {
 		getTasks()
 			.then((res) => {
@@ -83,6 +97,12 @@ const Task = () => {
 				setTasksError("Error fetching tasks, please try again");
 			});
 	}, []);
+
+	useEffect(() => {
+		// Initialize filtered tasks with all tasks initially
+		setFilteredTasks(tasks);
+	}, [tasks]);
+
 	return (
 		<main className="container mx-auto">
 			<section className="max-w-5xl mx-auto m-12 p-16">
@@ -98,15 +118,18 @@ const Task = () => {
 				<h1 className="text-4xl md:text-7xl font-bold text-center py-3 mb-16">
 					Your Tasks
 				</h1>
-				<div className="m-8 flex flex-col-reverse md:flex-row gap-8 items-start md:items-center md:justify-between">
-					<Search />
-					<Button
-						handleClick={() => navigate("/")}
-						extraBtnClasses="bg-primary text-white font-medium py-2 hover:bg-primaryHover ml-auto"
-					>
-						<span>Add Task</span>
-						<PlusIcon height={25} className="hidden md:flex" />
-					</Button>
+				<div className="m-8 flex flex-col md:flex-row gap-8 items-start md:items-center md:justify-between">
+					{/* <Search handleSearch={handleSearch} /> */}
+					<div className="flex justify-center md:justify-start w-full">
+						<Button
+							handleClick={() => navigate("/")}
+							extraBtnClasses="bg-primary text-white font-medium py-2 hover:bg-primaryHover mx-auto"
+						>
+							<span>Add Task</span>
+							<PlusIcon height={35} className="hidden md:flex" />
+						</Button>
+
+					</div>
 				</div>
 				{tasksError ? (
 					<span className="m-8 text-error">{tasksError}</span>
@@ -123,7 +146,7 @@ const Task = () => {
 								/>
 							</div>
 							<div>
-								{tasks
+								{(searchQuery ? filteredTasks : tasks)
 									.filter((task) => !task.done)
 									.map((task) => (
 										<TaskItem
@@ -139,7 +162,7 @@ const Task = () => {
 						<div className="flex-1">
 							<h3 className="text-2xl font-bold m-8">Completed Tasks</h3>
 							<div>
-								{tasks
+								{(searchQuery ? filteredTasks : tasks)
 									.filter((task) => task.done)
 									.map((task) => (
 										<TaskItem

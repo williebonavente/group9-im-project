@@ -6,15 +6,15 @@
 @layer base {
     :root{
         --base-bg: #ffffff;
-        --btn-bg-primary: #be185d;
-        --btn-bg-primary-hover: #9d174d;
+        --btn-bg-primary: #8f18be;
+        --btn-bg-primary-hover: #571b33;
         --btn-icon-main: #1e293b;
         --btn-bg-ok: #4ade80;
         --btn-bg-light-ok: #bbf7d0;
         --btn-bg-light: #e5e7eb;
-        --low-priority: #facc15;
-        --medium-priority: #fb923c;
-        --high-priority: #f87171;
+        --low-priority: #30fa15;
+        --medium-priority: #e8fb3ce7;
+        --high-priority: #ec4747;
         --text-error: #dc2626;
         --text-ok: #16a34a;
         --text-main: #262626;

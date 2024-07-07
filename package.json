@@ -17,6 +17,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/react-speech-recognition": "^3.9.5",
     "ai": "^3.2.16",
+    "appwrite": "^15.0.0",
     "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "react": "^18.3.1",

@@ -29,8 +29,10 @@ const Register: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-base">
       <div className="login-register-container max-w-md w-full bg-white p-8 border border-container rounded shadow-md">
         <form ref={registerForm} onSubmit={handleSubmit}>
+        <h2 className="text-3xl text-center text-primary font-bold mb-4">Register</h2>
+        <br></br>
           <div className="form-field-wrapper mb-4">
-            <label className="block text-main text-sm font-bold mb-2">Name:</label>
+            <label className="block text-main text-sm font-bold mb-2" title="Enter your name">Name:</label>
             <input
               required
               type="text"
@@ -41,7 +43,7 @@ const Register: React.FC = () => {
           </div>
 
           <div className="form-field-wrapper mb-4">
-            <label className="block text-main text-sm font-bold mb-2">Email:</label>
+            <label className="block text-main text-sm font-bold mb-2" title="Enter your email">Email:</label>
             <input
               required
               type="email"
@@ -52,7 +54,7 @@ const Register: React.FC = () => {
           </div>
 
           <div className="form-field-wrapper mb-4">
-            <label className="block text-main text-sm font-bold mb-2">Password:</label>
+            <label className="block text-main text-sm font-bold mb-2" title="Enter your password">Password:</label>
             <input
               required
               type="password"
@@ -63,7 +65,7 @@ const Register: React.FC = () => {
           </div>
 
           <div className="form-field-wrapper mb-4">
-            <label className="block text-main text-sm font-bold mb-2">Confirm Password:</label>
+            <label className="block text-main text-sm font-bold mb-2" title="Confirm your password">Confirm Password:</label>
             <input
               required
               type="password"
@@ -76,7 +78,7 @@ const Register: React.FC = () => {
           <div className="form-field-wrapper">
             <input
               type="submit"
-              value="Register"
+              value="Submit"
               className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primaryHover cursor-pointer"
             />
           </div>

@@ -1,96 +1,73 @@
-import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { account, ID } from './appwrite'; // Ensure ID is imported from appwrite
-import { useNavigate } from 'react-router-dom';
+import { createContext, useState, useEffect, useContext } from "react";
+import { account } from "./appwrite";
+import { useNavigate } from "react-router-dom";
+import { ID } from "appwrite";
 
-interface UserInfo {
-  email: string;
-  password: string;
-  password1?: string;
-  name?: string;
-}
+const AuthContext = createContext(null);
 
-interface AccountDetails {
-  $id: string;
-  email: string;
-  name?: string;
-}
-
-interface AuthContextType {
-  user: AccountDetails | null;
-  loginUser: (userInfo: UserInfo) => Promise<void>;
-  logoutUser: () => Promise<void>;
-  registerUser: (userInfo: UserInfo) => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<AccountDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    //setLoading(false)
     checkUserStatus();
   }, []);
 
-  const loginUser = async (userInfo: UserInfo) => {
+  const loginUser = async (userInfo) => {
     setLoading(true);
+
+    console.log("userInfo", userInfo);
+
     try {
-      await account.createSession(userInfo.email, userInfo.password);
-      const accountDetails = await account.get();
+      let response = await account.createEmailSession(
+        userInfo.email,
+        userInfo.password
+      );
+      let accountDetails = await account.get();
       setUser(accountDetails);
     } catch (error) {
-      console.error('Failed to login', error);
-      throw error;
-    } finally {
-      setLoading(false);
+      console.error(error);
     }
+    setLoading(false);
   };
 
-  const logoutUser = async () => {
-    try {
-      await account.deleteSession('current');
-      setUser(null);
-    } catch (error) {
-      console.error('Failed to logout', error);
-    }
-  };
 
-  const registerUser = async (userInfo: UserInfo) => {
+  const registerUser = async (userInfo) => {
     setLoading(true);
+
     try {
-      // Ensure that ID.unique() generates a valid user ID
-      const userId = ID.unique();
-      console.log('Generated userId:', userId); // Add logging to inspect generated ID
-      await account.create(userId, userInfo.email, userInfo.password1!, userInfo.name!);
-      await account.createSession(userInfo.email, userInfo.password1!);
-      const accountDetails = await account.get();
+      let response = await account.create(
+        ID.unique(),
+        userInfo.email,
+        userInfo.password1,
+        userInfo.name
+      );
+
+      await account.createEmailSession(userInfo.email, userInfo.password1);
+      let accountDetails = await account.get();
       setUser(accountDetails);
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Failed to register', error);
-      throw error;
-    } finally {
-      setLoading(false);
+      console.error(error);
     }
+
+    setLoading(false);
   };
 
   const checkUserStatus = async () => {
     try {
-      const accountDetails = await account.get();
+      let accountDetails = await account.get();
       setUser(accountDetails);
-    } catch (error) {
-      console.error('Failed to check user status', error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) {}
+    setLoading(false);
   };
 
-  const contextData: AuthContextType = {
+  const contextData = {
     user,
     loginUser,
-    logoutUser,
     registerUser,
   };
 
@@ -101,14 +78,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+//Custom Hook
+export const useAuth = () => {
+  return useContext(AuthContext);
 };
 
-export { AuthContext };
 export default AuthContext;
